@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
 
+    # Use SQLite for testing if set to True
+    USE_SQLITE: bool = True
+    SQLITE_DB_PATH: str = "./data/llama_factory.db"
+
     # Application Configuration
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 7860
@@ -33,7 +37,9 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        """Get PostgreSQL database URL"""
+        """Get database URL (PostgreSQL or SQLite)"""
+        if self.USE_SQLITE:
+            return f"sqlite:///{self.SQLITE_DB_PATH}"
         return (
             f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
